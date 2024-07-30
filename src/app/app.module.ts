@@ -1,20 +1,27 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { RestaurantListComponent } from './restaurant-list/restaurant-list.component';
+import { RestaurantDetailComponent } from './restaurant-detail/restaurant-detail.component';
+import { AppRoutingModule } from './app-routing.module';
+import { ApiService } from './api.service'; // Import ApiService
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    RestaurantListComponent,
+    RestaurantDetailComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    HttpClientModule,
     AppRoutingModule
   ],
-  providers: [
-    provideClientHydration()
-  ],
+  providers: [ApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

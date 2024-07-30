@@ -1,0 +1,33 @@
+<div class="container">
+  <h1 class="text-center">Bikkgane Biryani</h1>
+  <div class="row">
+      <div class="col-md-6 mb-4">
+          <div class="img-container">
+            <img [src]="restaurant.imageUrl" alt="{{ restaurant.Name }}" class="img-fluid" />
+          </div>
+      </div>
+      <div class=" firstcol col-md-6">
+        <p><strong>Address:</strong> {{ restaurant.Address }}</p>
+        <p><strong>City:</strong> {{ restaurant.City }}</p>
+        <p><strong>Country Code:</strong> {{ restaurant.CountryCode }}</p>
+        <p><strong>Locality:</strong> {{ restaurant.Locality }}</p>
+        <p><strong>Cuisines:</strong> {{ restaurant.Cuisine }}</p>
+        <p><strong>Average Cost for Two:</strong> {{ restaurant.AverageCostfortwo }}</p>
+        <p><strong>Currency:</strong> {{ restaurant.Currency }}</p>
+        <p><strong>Aggregate Rating:</strong> {{ restaurant.Aggregaterating }}</p>
+        <p><strong>Rating Text:</strong> {{ restaurant.Ratingtext }}</p>
+      </div>
+  </div>
+  <div class="ratings">
+      <div class="rating-box">
+          <p>Dining Ratings</p>
+          <p class="rating-value">{{ restaurant.Aggregaterating }}</p>
+          <p>{{restaurant.Aggregaterating*10}}K Ratings</p>
+      </div>
+      <div class="rating-box">
+          <p> Rating Text</p>
+          <p class="rating-value">4.3</p>
+          <p>{{ restaurant.AverageCostfortwo }}K Reviews</p>
+      </div>
+  </div>
+</div>
