@@ -7,19 +7,24 @@ import { AppComponent } from './app.component';
 import { RestaurantListComponent } from './restaurant-list/restaurant-list.component';
 import { RestaurantDetailComponent } from './restaurant-detail/restaurant-detail.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ApiService } from './api.service'; // Import ApiService
+import { ApiService } from './api.service';
+import { NgbModule, NgbPagination, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { ReviewComponent } from './review/review.component'; // Import ApiService
 
 @NgModule({
   declarations: [
     AppComponent,
     RestaurantListComponent,
-    RestaurantDetailComponent
+    RestaurantDetailComponent,
+    ReviewComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgbModule,
+    NgbPaginationModule
   ],
   providers: [ApiService],
   bootstrap: [AppComponent]

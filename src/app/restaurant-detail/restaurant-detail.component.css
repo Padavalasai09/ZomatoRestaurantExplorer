@@ -65,5 +65,12 @@
 
 .rating-value {
     font-size: 2em;
-    color: #28a745;
+    color: #44db76;
 }
+.re{
+    text-align: center;
+    align-items: center;
+    height: 40px;
+    margin-top: 40px;
+    
+  }

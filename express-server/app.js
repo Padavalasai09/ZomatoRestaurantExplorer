@@ -9,7 +9,8 @@ const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
-app.use(cors()); 
+app.use(cors());
+const defaultImageUrl = 'https://b.zmtcdn.com/data/pictures/chains/8/17582668/f3ff86b21f7eefa256dfc0db0cf62e23_featured_v2.jpg';
 
 // Connect to SQLite database
 const dbPath = path.join(__dirname, '../db', 'zomato.db');
@@ -30,10 +31,10 @@ app.get('/api/restaurants/:id', (req, res) => {
   const id = req.params.id;
   db.get(`SELECT * FROM restaurants WHERE ID = ?`, [id], (err, row) => {
     if (err) {
-      res.status(500).send(err.message);
+      res.status(500).send({ error: err.message });
     } else {
       const image = imageUrls.find(img => img.id === row.ID);
-      row.imageUrl = image ? image.imageUrl : '';
+      row.imageUrl = image ? image.imageUrl : defaultImageUrl;
       res.json(row);
     }
   });
@@ -41,20 +42,50 @@ app.get('/api/restaurants/:id', (req, res) => {
 
 // Get List of Restaurants with Pagination
 app.get('/api/restaurants', (req, res) => {
-  const page = req.query.page || 1;
-  const limit = req.query.limit || 10;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
 
   db.all(`SELECT * FROM restaurants LIMIT ? OFFSET ?`, [limit, offset], (err, rows) => {
     if (err) {
-      res.status(500).send(err.message);
+      res.status(500).send({ error: err.message });
     } else {
-      // Add image URL to each restaurant
-      const result = rows.map(row => {
-        const image = imageUrls.find(img => img.id === row.ID);
-        return { ...row, imageUrl: image ? image.imageUrl : '' };
+      db.get(`SELECT COUNT(*) AS count FROM restaurants`, (err, countResult) => {
+        if (err) {
+          res.status(500).send({ error: err.message });
+        } else {
+          const total = countResult.count;
+          const result = rows.map(row => {
+            const image = imageUrls.find(img => img.id === row.ID);
+            return { ...row, imageUrl: image ? image.imageUrl : defaultImageUrl };
+          });
+          res.json({ restaurants: result, total });
+        }
       });
-      res.json(result);
+    }
+  });
+});
+
+// Add a review
+app.post('/api/put-restaurants', (req, res) => {
+  const { username, rating, suggestions } = req.body;
+  const query = `INSERT INTO reviewa (Name, Description, Rating) VALUES (?, ?, ?)`;
+  db.run(query, [username, suggestions, rating], function(err) {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.status(201).send({ id: this.lastID, username, suggestions, rating });
+    }
+  });
+});
+
+// Fetch reviews
+app.get('/api/fetch', (req, res) => {
+  db.all(`SELECT * FROM reviewa`, (err, rows) => {
+    if (err) {
+      res.status(500).send({ error: err.message });
+    } else {
+      res.json(rows);
     }
   });
 });
@@ -62,23 +93,33 @@ app.get('/api/restaurants', (req, res) => {
 // Search Restaurants with Pagination
 app.get('/api/search-restaurants', (req, res) => {
   const query = req.query.q.toLowerCase();
-  const page = req.query.page || 1;
-  const limit = req.query.limit || 10;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
 
   db.all(
-    `SELECT * FROM restaurants WHERE  lower(name) LIKE ? OR lower(cuisine) LIKE ? OR lower(address) LIKE ? LIMIT ? OFFSET ?`,
-    [`%${query}%`, `%${query}%`, `%${query}%`, limit, offset],
+    `SELECT * FROM restaurants WHERE ID LIKE ? OR lower(name) LIKE ? OR lower(cuisine) LIKE ? OR lower(address) LIKE ? LIMIT ? OFFSET ?`,
+    [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`, limit, offset],
     (err, rows) => {
       if (err) {
-        res.status(500).send(err.message);
+        res.status(500).send({ error: err.message });
       } else {
-        // Add image URL to each restaurant
-        const result = rows.map(row => {
-          const image = imageUrls.find(img => img.id === row.ID);
-          return { ...row, imageUrl: image ? image.imageUrl : '' };
-        });
-        res.json(result);
+        db.get(
+          `SELECT COUNT(*) AS count FROM restaurants WHERE ID LIKE ? OR lower(name) LIKE ? OR lower(cuisine) LIKE ? OR lower(address) LIKE ?`,
+          [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`],
+          (err, countResult) => {
+            if (err) {
+              res.status(500).send({ error: err.message });
+            } else {
+              const total = countResult.count;
+              const result = rows.map(row => {
+                const image = imageUrls.find(img => img.id === row.ID);
+                return { ...row, imageUrl: image ? image.imageUrl : defaultImageUrl };
+              });
+              res.json({ restaurants: result, total });
+            }
+          }
+        );
       }
     }
   );

@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <h1 class="text-center">Restaurant List</h1>
+  <h1 class="text-center">Restaurants</h1>
   <div class="d-flex justify-content-center mb-4">
     <div class="input-group">
       <input 
@@ -30,6 +30,17 @@
   </div>
   <div class="d-flex justify-content-between">
     <button (click)="prevPage()" class="btn btn-secondary" [disabled]="page <= 1">Previous</button>
-    <button (click)="nextPage()" class="btn btn-secondary">Next</button>
+    
+    <div>
+      <span *ngFor="let p of getPages()">
+        <button class="btn btn-link" (click)="goToPage(p)" [ngClass]="{'active': p === page}">{{ p }}</button>
+      </span>
+    </div>
+    
+    <button (click)="nextPage()" class="btn btn-secondary" [disabled]="page >= total_pages">Next</button>
   </div>
 </div>
+
+  <!-- <app-review></app-review>   -->
+
+<!-- (keyup.enter) -->

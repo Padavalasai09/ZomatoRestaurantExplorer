@@ -1,0 +1,27 @@
+<div class="review-form">
+  <h1>Leave a Review</h1>
+  <form (ngSubmit)="addReview()" #reviewForm="ngForm">
+    <label>Enter Name</label>
+    <input type="text" placeholder="Enter the Name" [(ngModel)]="username" name="username" required>
+    <label class="pt-3">Suggestions</label>
+    <div class="form-group">
+      <textarea class="form-control" rows="3" [(ngModel)]="suggestions" name="suggestions" required></textarea>
+    </div>
+    <label class="d-flex">Rating</label>
+    <input type="number" [(ngModel)]="rating" name="rating" min="1" max="5" required>
+    <button class="d-flex mt-3 btn btn-primary text-center submit" type="submit" [disabled]="!reviewForm.form.valid">Submit</button>
+  </form>
+</div>
+
+<div class="message-container" [@fadeInOut]="message ? 'in' : 'out'">
+  <p>{{ message }}</p>
+</div>
+
+<div class="reviews-section">
+  <h2>Reviews</h2>
+  <div class="review-card" *ngFor="let review of fetchedData">
+    <h3>{{ review.Name }}</h3>
+    <p>{{ review.Description }}</p>
+    <div class="rating">Rating: {{ review.Rating }}</div>
+  </div>
+</div>

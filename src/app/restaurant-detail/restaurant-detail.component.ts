@@ -9,7 +9,7 @@ import { ApiService } from '../api.service';
 })
 export class RestaurantDetailComponent implements OnInit {
   restaurant: any;
-
+ 
   constructor(private route: ActivatedRoute, private apiService: ApiService) {}
 
   ngOnInit(): void {
